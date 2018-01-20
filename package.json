@@ -1,0 +1,18 @@
+{
+  "name": "printerapp",
+  "version": "1.0.0",
+  "description": "PrinterApp",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "printer",
+    "weighing_machine"
+  ],
+  "author": "Vikas",
+  "license": "ISC",
+  "dependencies": {
+    "serialport": "^6.0.4"
+  }
+}
