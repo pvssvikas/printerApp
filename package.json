@@ -13,6 +13,7 @@
   "author": "Vikas",
   "license": "ISC",
   "dependencies": {
-    "serialport": "^6.0.4"
+    "serialport": "^6.0.4",
+    "split": "^1.0.1"
   }
 }

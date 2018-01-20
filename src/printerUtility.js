@@ -1,10 +1,20 @@
 var net = require('net');
 var client = new net.Socket();
+const EventEmitter = require('events');
+
 var printerName = "";
+
+
+class PrintEventHandler extends EventEmitter {}
+var weightEventHandler = null;
+
+var eventHandler = new PrintEventHandler();
+
 
 client.on('data', function(data) {
     console.log('\nReceived: ' + data + '\n');
     client.destroy();
+    eventHandler.emit('printed');
 });
 
 client.on('close', function() {
@@ -12,10 +22,14 @@ client.on('close', function() {
 });
 
 module.exports = {
-
-    testFun : function() {
-        console.log ("testFun");
-        return "printed"
+    appEventHandler : eventHandler,
+    printWeight : function(weight) {
+        console.log ("printerApp recieved " + weight + ' to get printed');
+        this.connect('SYS-1', () => {
+            this.setPrintData(weight, function() {
+                // print callback
+            });
+        });
     },
     connect: function(printer, callback) {
         client.connect(3210, printer, function() {
@@ -40,6 +54,7 @@ module.exports = {
         callback();
     },
     setPrintData:function(data, callback) {
+        console.log( 'recieved ' + data + ' to print');
         let f1 = "DATA;";
 	    let printBuffer = Buffer.alloc(f1.length + data.length + 2, 0x3);
 	    printBuffer[0] = 0x2;
