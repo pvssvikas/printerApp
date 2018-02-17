@@ -11,6 +11,11 @@ printerUtility.appEventHandler.on('printed', () => {
   weightPrinted = true;
 });
 
+printerUtility.appEventHandler.on('ignored', () => {
+  console.log('ignored to wait for last print feedback, getting ready to print new information');
+  weightPrinted = true;
+});
+
 const openOptions = {
   baudRate: 9600,
   dataBits: 8,
@@ -33,6 +38,7 @@ var previousWeight = [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0];
 var currentWeight = 0;
 var previousWeightIndex = 0;
 
+var weightReadyToPrint = false;
 var absoluteWeight = 0;
 var userIsInformed = false;
 var wieghtStabilized = false;
@@ -52,6 +58,9 @@ port.pipe(split()).on('data', (data) => {
 
   if ( absoluteWeight == 0 && !userIsInformed) {
      console.log('Weight Removed');
+     if (wieghtStabilized) {
+      weightReadyToPrint = true;
+     }
      wieghtStabilized = false;
      userIsInformed = true;
   }
@@ -75,10 +84,25 @@ port.pipe(split()).on('data', (data) => {
     printNewWeight = true;
   }
 
-  if (wieghtStabilized && weightPrinted && printNewWeight) {
-    printerUtility.printWeight(previousWeight[0].toString() + ' g');
+  if ( weightReadyToPrint && printNewWeight && !weightPrinted) {
+    printerUtility.appEventHandler.emit('ignoreLastPrint');
+  }
+
+  if (weightReadyToPrint && weightPrinted && printNewWeight) {
+
     weightPrinted = false;
     printNewWeight = false;
+    weightReadyToPrint = false;
+
+    printerUtility.printWeight(previousWeight[0].toString() + ' g', ()=>{
+      console.log("all call backs returned;");
+    });
+    /*
+    printerUtility.stopPrint(()=>{
+      printerUtility.startPrint(()=>{
+        
+      });
+    });*/
   }
 });
 

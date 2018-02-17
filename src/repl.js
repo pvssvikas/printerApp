@@ -35,7 +35,7 @@ replServer.defineCommand('print', {
       if ("${d1}" == "") {
           d1 = "Hello World !!"
       }
-      printerUtility.setPrintData(d1, ()=>{
+      printerUtility.printWeight(d1, ()=>{
         console.log(`Print ${d1}!`);
         this.displayPrompt();
       });
@@ -59,7 +59,7 @@ replServer.defineCommand('stopPrint', function stopPrint() {
 
 replServer.defineCommand('quit', function quit() {
     console.log('Goodbye!');
-    printerUtility.close(() => {
+    printerUtility.closeConnection(() => {
         this.close();
     });
 });
