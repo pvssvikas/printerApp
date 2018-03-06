@@ -34,7 +34,7 @@ process.on('SIGINT', function() {
   process.exit(0);
 });
 
-var previousWeight = [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0];
+var previousWeight = [0,0,0,0,0, 0,0,0,0,0];
 var currentWeight = 0;
 var previousWeightIndex = 0;
 
@@ -53,8 +53,8 @@ var isWieghtStabilized = function() {
 }
 
 port.pipe(split()).on('data', (data) => {
-  
-  absoluteWeight = parseFloat(data.substr(1));
+  // earlier we used to escape first character using .substr(1) for some reason it is no longer required as on Mar/06th
+  absoluteWeight = parseFloat(data);
 
   if ( absoluteWeight == 0 && !userIsInformed) {
      console.log('Weight Removed');
@@ -94,7 +94,7 @@ port.pipe(split()).on('data', (data) => {
     printNewWeight = false;
     weightReadyToPrint = false;
 
-    printerUtility.printWeight(previousWeight[0].toString() + ' g', ()=>{
+    printerUtility.printWeight(previousWeight[0].toString() + ' Kg', ()=>{
       console.log("all call backs returned;");
     });
     /*
